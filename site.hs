@@ -5,7 +5,7 @@ import Hakyll
 import Data.Functor ((<&>))
 
 main :: IO ()
-main = hakyll $ do
+main = hakyllWith config $ do
   match "static/*" $ do
     route $ gsubRoute "static/" (const "")
     compile copyFileCompiler
@@ -55,3 +55,8 @@ postCtx :: Context String
 postCtx =
   dateField "date" "%B %e, %Y"
     `mappend` defaultContext
+
+config :: Configuration
+config = defaultConfiguration
+  { destinationDirectory = "_site/docs"
+  }
