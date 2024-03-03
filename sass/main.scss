@@ -1,0 +1,124 @@
+$header-h1-size: 2em;
+
+$h1-font-size: 1.5em;
+$h2-font-size: 1.4em;
+$h3-font-size: 1.2em;
+$normal-font-size: 1em;
+$normal-line-height: 1.3em;
+
+$color-base0: #424242;
+$color-base2: #9e9e9e;
+$color-base3: #e0e0e0;
+$color-base3minus3: #c9c9c9;
+
+$bg: $color-base3;
+$fg: $color-base0;
+
+$color-teal: #80cbc4;
+$color-teal1: #4db6ac;
+
+* {
+  margin: auto;
+  max-width: 80ch;
+  border-collapse:collapse;
+}
+
+header {
+  text-align: center;
+  margin: 40px 0px 20px;
+  background-color: $bg;
+
+  a {
+    text-decoration: none;
+    color: $fg;
+  }
+  
+  h1 {
+    font-size: $header-h1-size;
+    font-weight: normal;
+
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+
+    margin-bottom: 0.3em;
+  }
+
+  nav {
+    a {
+      font-size: $h3-font-size;
+      letter-spacing: 0.05em;
+
+      margin: 0 0.3em;
+      text-decoration: underline;
+    }
+  }
+}
+
+body {
+  background-color: $bg;
+}
+
+main {
+  background-color: $fg;
+
+  color: $bg;
+  font-size: $normal-font-size;
+  line-height: $normal-line-height;
+
+  max-width: 600px;
+  min-height: 600px;
+
+  padding: 3ch;
+
+  margin: 0px auto 1em;
+
+  hr {
+    border: none;
+    border-top: 1px solid;
+    margin: inherit;
+  }
+
+  h1 {
+    font-size: $h1-font-size;
+    font-weight: normal;
+    line-height: $normal-line-height;
+    display: block;
+    margin: inherit;
+  }
+
+  h2 {
+    font-weight: lighter;
+    margin: inherit;
+  }
+
+  .article {
+    margin: inherit;
+  }
+
+  .subtitle {
+    float: right;
+    color: $color-base3minus3;
+    text-align: right;
+  }
+
+  p {
+    margin: inherit;
+    text-align: justify;
+  }
+
+  ul {
+    margin: inherit;
+    text-align: justify;
+    list-style-type: "–  ";
+    padding-left: 1.05em; // This is magic, don't worry about it
+  }
+  
+  a {
+    &:link {
+      color: $color-teal;
+    }
+    &:visited {
+      color: $color-teal1;
+    }
+  }
+}

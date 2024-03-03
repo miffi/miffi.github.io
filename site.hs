@@ -1,66 +1,57 @@
---------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-import           Data.Monoid (mappend)
-import           Hakyll
 
+import Data.Monoid (mappend)
+import Hakyll
+import Data.Functor ((<&>))
 
---------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
-    match "images/*" $ do
-        route   idRoute
-        compile copyFileCompiler
+  match "static/*" $ do
+    route $ gsubRoute "static/" (const "")
+    compile copyFileCompiler
 
-    match "css/*" $ do
-        route   idRoute
-        compile compressCssCompiler
+  match "sass/*" $ do
+    route $ gsubRoute "sass/" (const "") `composeRoutes` setExtension "css"
+    compile (sassCompiler <&> fmap compressCss)
 
-    match (fromList ["about.rst", "contact.markdown"]) $ do
-        route   $ setExtension "html"
-        compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
-            >>= relativizeUrls
+  match "src/*.md" $ do
+    route srcRoute
+    compile $
+      pandocCompiler
+        >>= loadAndApplyTemplate "templates/default.html" defaultContext
 
-    match "posts/*" $ do
-        route $ setExtension "html"
-        compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/post.html"    postCtx
-            >>= loadAndApplyTemplate "templates/default.html" postCtx
-            >>= relativizeUrls
+  match "src/blog/*" $ do
+    route srcRoute
+    compile $
+      pandocCompiler
+        >>= loadAndApplyTemplate "templates/blog_page.html" postCtx
+        >>= loadAndApplyTemplate "templates/default.html" postCtx
+        >>= relativizeUrls
 
-    create ["archive.html"] $ do
-        route idRoute
-        compile $ do
-            posts <- recentFirst =<< loadAll "posts/*"
-            let archiveCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Archives"            `mappend`
-                    defaultContext
+  create ["blog.html"] $ do
+    route idRoute
+    compile $ do
+      posts <- recentFirst =<< loadAll "src/blog/*"
+      let blogCtx =
+            listField "posts" postCtx (return posts)
+              `mappend` constField "title" "Blog"
+              `mappend` defaultContext
 
-            makeItem ""
-                >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
-                >>= loadAndApplyTemplate "templates/default.html" archiveCtx
-                >>= relativizeUrls
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/blog.html" blogCtx
+        >>= loadAndApplyTemplate "templates/default.html" blogCtx
+        >>= relativizeUrls
 
+  match "templates/*" $ compile templateBodyCompiler
 
-    match "index.html" $ do
-        route idRoute
-        compile $ do
-            posts <- recentFirst =<< loadAll "posts/*"
-            let indexCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    defaultContext
+srcRoute :: Routes
+srcRoute = gsubRoute "src/" (const "") `composeRoutes` setExtension "html"
 
-            getResourceBody
-                >>= applyAsTemplate indexCtx
-                >>= loadAndApplyTemplate "templates/default.html" indexCtx
-                >>= relativizeUrls
+sassCompiler :: Compiler (Item String)
+sassCompiler = getResourceString
+        >>= withItemBody (unixFilter "sassc" ["-s"])
 
-    match "templates/*" $ compile templateBodyCompiler
-
-
---------------------------------------------------------------------------------
 postCtx :: Context String
 postCtx =
-    dateField "date" "%B %e, %Y" `mappend`
-    defaultContext
+  dateField "date" "%B %e, %Y"
+    `mappend` defaultContext
