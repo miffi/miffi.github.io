@@ -15,5 +15,5 @@ beautiful
 ---
 
 ## Current activities
-- Preparing for the next semester
-- Reading Wuthering Heights by Emily Bronte 
+- Struggling through the uni semester
+- Playing Tales of Berseria
