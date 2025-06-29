@@ -1,0 +1,8 @@
+baseURL = 'https://decadent.rest'
+languageCode = 'en-us'
+title = 'The Decadent Rest'
+theme = 'meandering'
+
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'
